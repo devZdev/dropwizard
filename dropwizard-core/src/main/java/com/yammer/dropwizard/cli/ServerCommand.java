@@ -1,14 +1,10 @@
 package com.yammer.dropwizard.cli;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.config.ServerFactory;
+import com.yammer.dropwizard.lifecycle.ServerLifeCycle;
 import com.yammer.dropwizard.logging.Log;
 import org.apache.commons.cli.CommandLine;
-import org.eclipse.jetty.server.Server;
 
 // TODO: 10/12/11 <coda> -- write tests for ServerCommand
 
@@ -43,26 +39,14 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
     protected void run(AbstractService<T> service,
                        T configuration,
                        CommandLine params) throws Exception {
-        final Environment environment = new Environment(configuration, service);
-        service.initializeWithBundles(configuration, environment);
-
-        final Server server = new ServerFactory(configuration.getHttpConfiguration()).buildServer(environment);
-
-        final Log log = Log.forClass(ServerCommand.class);
-        try {
-            final String banner = Resources.toString(Resources.getResource("banner.txt"), Charsets.UTF_8);
-            log.info("Starting {}\n{}", service.getName(), banner);
-        } catch (IllegalArgumentException ignored) {
-            // don't display the banner if there isn't one
-            log.info("Starting {}", service.getName());
-        }
+        ServerLifeCycle lifeCycle = new ServerLifeCycle<T>(service, configuration);
 
         try {
-            server.start();
-            server.join();
+            lifeCycle.init().start().join();
         } catch (Exception e) {
+            final Log log = Log.forClass(ServerCommand.class);
             log.error(e, "Unable to start server, shutting down");
-            server.stop();
+            lifeCycle.stop();
         }
     }
 }
