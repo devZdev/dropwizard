@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#
+# Bootstrap a new Dropwizard project
+# 
+# usage: dropwizard [ --java | --scala ] [ --group=<groupId> ] [ --artifact=<artifactId> ] [ --version=<versionId> ] <name> <package>
+
