@@ -24,6 +24,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <dropwizard.version>${dropwizard.version}</dropwizard.version>
     <scala.version>${scala.version}</scala.version>
+    <mainClass>\${project.groupId}.\${project.artifactId}.\${project.name}Service</mainClass>
   </properties>
 
   <dependencies>
@@ -62,7 +63,7 @@
           <createDependencyReducedPom>true</createDependencyReducedPom>
           <transformers>
             <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-              <mainClass>\${package}.\${name}Service</mainClass>
+              <mainClass>\${mainClas}</mainClass>
             </transformer>
           </transformers>
           <!-- exclude signed Manifests -->
@@ -91,10 +92,12 @@
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.4</version>
         <configuration>
-          <manifest>
-            <addClasspath>true</addClasspath>
-            <mainClass>\${package}.\${name}Service</mainClass>
-          </manifest>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <mainClass>\${mainClass}</mainClass>
+            </manifest>
+          </archive>
         </configuration>
       </plugin>
       <plugin>
@@ -106,7 +109,7 @@
           <launchers>
             <launcher>
               <id>server</id>
-              <mainClass>\${package}.\${name}Service</mainClass>
+              <mainClass>\${mainClass}</mainClass>
               <args>
                 <arg>server</arg>
                 <arg>src/test/resources/conf.yml</arg>
