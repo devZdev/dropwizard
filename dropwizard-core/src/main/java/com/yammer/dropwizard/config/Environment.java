@@ -15,6 +15,7 @@ import com.yammer.dropwizard.lifecycle.Managed;
 import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.tasks.GarbageCollectionTask;
 import com.yammer.dropwizard.tasks.Task;
+import com.yammer.dropwizard.util.Duration;
 import com.yammer.metrics.core.HealthCheck;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -309,6 +310,43 @@ public class Environment extends AbstractLifeCycle {
     }
 
     /**
+     * Creates a new {@link ExecutorService} instance with a fixed number of threads and the given
+     * parameters whose lifecycle is managed by the service.
+     *
+     * @param nameFormat               a {@link String#format(String, Object...)}-compatible format
+     *                                 String, to which a unique integer (0, 1, etc.) will be
+     *                                 supplied as the single parameter.
+     * @param threads                  the number of threads to keep in the pool, even if they are
+     *                                 idle.
+     *
+     * @return a new {@link ExecutorService} instance.
+     */
+    public ExecutorService managedExecutorService(String nameFormat, int threads) {
+        return managedExecutorService(nameFormat, threads, Duration.seconds(5));
+    }
+
+    /**
+     * Creates a new {@link ExecutorService} instance with a fixed number of threads and the given
+     * parameters whose lifecycle is managed by the service.
+     *
+     * @param nameFormat               a {@link String#format(String, Object...)}-compatible format
+     *                                 String, to which a unique integer (0, 1, etc.) will be
+     *                                 supplied as the single parameter.
+     * @param threads                  the number of threads to keep in the pool, even if they are
+     *                                 idle.
+     * @param shutdownDelay            the maximum amount of time to block, waiting for a graceful
+     *                                 shutdown to complete during shutdown.
+     *
+     * @return a new {@link ExecutorService} instance.
+     */
+    public ExecutorService managedExecutorService(String nameFormat,
+                                                  int threads,
+                                                  Duration shutdownDelay) {
+        return managedExecutorService(
+                nameFormat, threads, threads, Duration.seconds(0), shutdownDelay);
+    }
+
+    /**
      * Creates a new {@link ExecutorService} instance with the given parameters whose lifecycle is
      * managed by the service.
      *
@@ -321,24 +359,49 @@ public class Environment extends AbstractLifeCycle {
      * @param keepAliveTime            when the number of threads is greater than the core, this is
      *                                 the maximum time that excess idle threads will wait for new
      *                                 tasks before terminating.
-     * @param unit                     the time unit for the keepAliveTime argument.
      *
      * @return a new {@link ExecutorService} instance
      */
     public ExecutorService managedExecutorService(String nameFormat,
                                                   int corePoolSize,
                                                   int maximumPoolSize,
-                                                  long keepAliveTime,
-                                                  TimeUnit unit) {
+                                                  Duration keepAliveTime) {
+        return managedExecutorService(
+                nameFormat, corePoolSize, maximumPoolSize, keepAliveTime, Duration.seconds(5));
+    }
+
+    /**
+     * Creates a new {@link ExecutorService} instance with the given parameters whose lifecycle is
+     * managed by the service.
+     *
+     * @param nameFormat               a {@link String#format(String, Object...)}-compatible format
+     *                                 String, to which a unique integer (0, 1, etc.) will be
+     *                                 supplied as the single parameter.
+     * @param corePoolSize             the number of threads to keep in the pool, even if they are
+     *                                 idle.
+     * @param maximumPoolSize          the maximum number of threads to allow in the pool.
+     * @param keepAliveTime            when the number of threads is greater than the core, this is
+     *                                 the maximum time that excess idle threads will wait for new
+     *                                 tasks before terminating.
+     * @param shutdownDelay            the maximum amount of time to block, waiting for a graceful
+     *                                 shutdown to complete during shutdown.
+     *
+     * @return a new {@link ExecutorService} instance
+     */
+    public ExecutorService managedExecutorService(String nameFormat,
+                                                  int corePoolSize,
+                                                  int maximumPoolSize,
+                                                  Duration keepAliveTime,
+                                                  Duration shutdownDelay) {
         final ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat)
                                                                       .build();
         final ExecutorService executor = new ThreadPoolExecutor(corePoolSize,
                                                                 maximumPoolSize,
-                                                                keepAliveTime,
-                                                                unit,
+                                                                keepAliveTime.getQuantity(),
+                                                                keepAliveTime.getUnit(),
                                                                 new LinkedBlockingQueue<Runnable>(),
                                                                 threadFactory);
-        manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS, nameFormat));
+        manage(new ExecutorServiceManager(executor, shutdownDelay, nameFormat));
         return executor;
     }
 
@@ -360,7 +423,7 @@ public class Environment extends AbstractLifeCycle {
                                                                       .build();
         final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(corePoolSize,
                                                                                   threadFactory);
-        manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS, nameFormat));
+        manage(new ExecutorServiceManager(executor, Duration.seconds(5), nameFormat));
         return executor;
     }
 

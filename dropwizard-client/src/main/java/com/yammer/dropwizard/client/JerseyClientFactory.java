@@ -7,6 +7,7 @@ import com.sun.jersey.client.apache4.config.ApacheHttpClient4Config;
 import com.sun.jersey.client.apache4.config.DefaultApacheHttpClient4Config;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
+import com.yammer.dropwizard.util.Duration;
 import org.apache.http.client.HttpClient;
 import java.util.concurrent.TimeUnit;
 
@@ -53,8 +54,7 @@ public class JerseyClientFactory {
         jerseyClient.setExecutorService(environment.managedExecutorService("jersey-client-%d",
                                                                            configuration.getMinThreads(),
                                                                            configuration.getMaxThreads(),
-                                                                           60,
-                                                                           TimeUnit.SECONDS));
+                                                                           Duration.seconds(60)));
 
         if (configuration.isGzipEnabled()) {
             jerseyClient.addFilter(new GZIPContentEncodingFilter(configuration.isCompressRequestEntity()));
