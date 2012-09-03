@@ -185,6 +185,28 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.8.1</version>
+                <configuration>
+                    <tags>
+                        <tag>
+                            <name>default</name>
+                            <placement>f</placement>
+                            <head>Default:</head>
+                        </tag>
+                        <tag>
+                            <name>min</name>
+                            <placement>f</placement>
+                            <head>Minimum:</head>
+                        </tag>
+                        <tag>
+                            <name>max</name>
+                            <placement>f</placement>
+                            <head>Maximum:</head>
+                        </tag>
+                    </tags>
+                  <links>
+                      <link>http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/</link>
+                  </links>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
