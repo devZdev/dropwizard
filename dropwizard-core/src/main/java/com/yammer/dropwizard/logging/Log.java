@@ -11,8 +11,12 @@ import java.util.Locale;
  * A logger class which provides SLF4J-style formatting without SLF4J's less-than-pleasant API.
  *
  * <code>
+ *
+ * // Explicit class specification
  * private static final Log LOG = Log.forClass(Thingy.class);
  *
+ * // Or, automatic class specification
+ * private static final Log LOG = Log.forThisClass();
  * ...
  *
  * LOG.debug("Simple usage: {} / {}", a, b);
@@ -22,14 +26,36 @@ import java.util.Locale;
  */
 @SuppressWarnings("UnusedDeclaration")
 public class Log {
-    /**
+
+	/**
+	 * Returns a {@link Log} instance for the current class.
+	 * The current class is determined in the static context by inspecting the stack.
+	 * Further details about this approach may be found
+	 * <a href="http://www.javaspecialists.eu/archive/Issue137.html">here</a>.
+	 * 
+	 * @return a {@link Log} instance with the current class name
+	 */
+	public static Log forThisClass() {
+		Throwable t = new Throwable();
+		StackTraceElement directCaller = t.getStackTrace()[1];
+		return named(directCaller.getClassName());
+	}
+
+	/**
      * Returns a {@link Log} instance for the given class.
      *
      * @param klass    a given class
      * @return a {@link Log} instance with {@code klass}'s name
      */
     public static Log forClass(Class<?> klass) {
-        return forSlf4jLogger(LoggerFactory.getLogger(klass));
+        // a thread-safe SLF4J initialization routine is apparently hard, so I get to do dumb
+        // shit like this
+        while (true) {
+            final org.slf4j.Logger logger = LoggerFactory.getLogger(klass);
+            if (logger instanceof Logger) {
+                return forSlf4jLogger(logger);
+            }
+        }
     }
 
     /**
@@ -39,7 +65,14 @@ public class Log {
      * @return a {@link Log} instance with the given name
      */
     public static Log named(String name) {
-        return forSlf4jLogger(LoggerFactory.getLogger(name));
+        // a thread-safe SLF4J initialization routine is apparently hard, so I get to do dumb
+        // shit like this
+        while (true) {
+            final org.slf4j.Logger logger = LoggerFactory.getLogger(name);
+            if (logger instanceof Logger) {
+                return forSlf4jLogger(logger);
+            }
+        }
     }
 
     /**

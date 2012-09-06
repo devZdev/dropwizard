@@ -133,7 +133,7 @@ Add the ``dropwizard-core`` library as a dependency:
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
-            <version>0.4.2</version>
+            <version>0.5.1</version>
         </dependency>
     </dependencies>
 
@@ -491,8 +491,8 @@ include the test string, the health check will explicitly fail by returning an u
 
 .. _gs-healthcheck-add:
 
-Adding A Heath Check
---------------------
+Adding A Health Check
+---------------------
 
 As with most things in Dropwizard, we create a new instance with the appropriate parameters and add
 it to the ``Environment``:

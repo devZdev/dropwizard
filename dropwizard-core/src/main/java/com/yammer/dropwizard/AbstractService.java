@@ -43,12 +43,13 @@ public abstract class AbstractService<T extends Configuration> {
     private final SortedMap<String, Command> commands;
 
     /**
-     * Creates a new service with the given name.
+     * Creates a new service with the given name. If name is {@code null} the service is named as
+     * the subclass by using {@link Class#getSimpleName()}.
      *
      * @param name    the service's name
      */
     protected AbstractService(String name) {
-        this.name = name;
+        this.name = (name == null) ? getClass().getSimpleName() : name;
         this.bundles = Lists.newArrayList();
         this.configuredBundles = Lists.newArrayList();
         this.modules = Lists.newArrayList();
@@ -190,12 +191,16 @@ public abstract class AbstractService<T extends Configuration> {
     public final void run(String[] arguments) throws Exception {
         if (isHelp(arguments)) {
             UsagePrinter.printRootHelp(this);
+            if (arguments.length == 0) {
+                System.exit(1);
+            }
         } else {
             final Command cmd = commands.get(arguments[0]);
             if (cmd != null) {
                 cmd.run(this, Arrays.copyOfRange(arguments, 1, arguments.length));
             } else {
                 UsagePrinter.printRootHelp(this);
+                System.exit(1);
             }
         }
     }
