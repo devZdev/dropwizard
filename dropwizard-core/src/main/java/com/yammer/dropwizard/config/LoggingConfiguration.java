@@ -13,22 +13,62 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.TimeZone;
 
+/**
+ * Configuration for general application logging.
+ */
 @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal"})
 public class LoggingConfiguration {
     static final TimeZone UTC = TimeZone.getTimeZone("UTC");
 
     public static class ConsoleConfiguration {
+
+        /**
+         * Whether to enable logging to the console.
+         *
+         * @default true
+         */
         @JsonProperty
         protected boolean enabled = true;
 
+        /**
+         * The log level threshold to log messages from.
+         * <p/>
+         * All messages of this level and above will appear in the log.
+         * <p/>
+         * Available levels are (in order, highest first):
+         * <ul>
+         *     <li>OFF</li>
+         *     <li>ERROR</li>
+         *     <li>WARN</li>
+         *     <li>INFO</li>
+         *     <li>DEBUG</li>
+         *     <li>TRACE</li>
+         *     <li>ALL</li>
+         * </ul>
+         *
+         * @default ALL
+         */
         @NotNull
         @JsonProperty
         protected Level threshold = Level.ALL;
 
+        /**
+         * The timezone for the timestamps for log messages.
+         * <p/>
+         * This must be a valid timezone identifier, e.g. "<i>Europe/London</i>", "<i>EST</i>".
+         *
+         * @default UTC
+         */
         @NotNull
         @JsonProperty
         protected TimeZone timeZone = UTC;
 
+        /**
+         * The format of log messages.
+         * <p/>
+         * The format must be a pattern that is valid for Logbacks' {@link
+         * http://logback.qos.ch/manual/layouts.html#PatternLayout PatternLayout}.
+         */
         @JsonProperty
         protected String logFormat;
 
@@ -63,31 +103,94 @@ public class LoggingConfiguration {
 
     @SuppressWarnings("CanBeFinal")
     public static class FileConfiguration {
+
+        /**
+         * Whether to enable logging to a file.
+         *
+         * @default true
+         */
         @JsonProperty
         protected boolean enabled = false;
 
+        /**
+         * The log level threshold to log messages from.
+         * <p/>
+         * All messages of this level and above will appear in the log.
+         * <p/>
+         * Available levels are (in order, highest first):
+         * <ul>
+         *     <li>OFF</li>
+         *     <li>ERROR</li>
+         *     <li>WARN</li>
+         *     <li>INFO</li>
+         *     <li>DEBUG</li>
+         *     <li>TRACE</li>
+         *     <li>ALL</li>
+         * </ul>
+         *
+         * @default ALL
+         */
         @NotNull
         @JsonProperty
         protected Level threshold = Level.ALL;
 
+        /**
+         * The full path to the file to log messages to.
+         */
         @JsonProperty
         protected String currentLogFilename;
 
+        /**
+         * Whether to enable archving of old log files.
+         * <p/>
+         * Archiving is achieved by "rolling" the log file based on the pattern defined by {@link
+         * FileConfiguration#archivedLogFilenamePattern}.
+         *
+         * @default true
+         */
         @JsonProperty
         protected boolean archive = true;
 
+        /**
+         * The pattern to use for archived log files.
+         * <p/>
+         * The pattern must be a valid Logback {@link
+         * http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy
+         * TimeBasedRollingPolicy} file name pattern.
+         */
         @JsonProperty
         protected String archivedLogFilenamePattern;
 
+        /**
+         * The maximum number of archived log files to retain.
+         * <p/>
+         * Once this limit is reached, old archived log files will be removed whenever a new log
+         * file is archived.
+         *
+         * @default 5
+         */
         @Min(1)
         @Max(50)
         @JsonProperty
         protected int archivedFileCount = 5;
 
+        /**
+         * The timezone for the timestamps for log messages.
+         * <p/>
+         * This must be a valid timezone identifier, e.g. "<i>Europe/London</i>", "<i>EST</i>".
+         *
+         * @default UTC
+         */
         @NotNull
         @JsonProperty
         protected TimeZone timeZone = UTC;
 
+        /**
+         * The format of log messages.
+         * <p/>
+         * The format must be a pattern that is valid for Logbacks' {@link
+         * http://logback.qos.ch/manual/layouts.html#PatternLayout PatternLayout}.
+         */
         @JsonProperty
         protected String logFormat;
 
@@ -135,9 +238,33 @@ public class LoggingConfiguration {
     }
 
     public static class SyslogConfiguration {
+
+        /**
+         * Whether to enable logging to a file.
+         *
+         * @default true
+         */
         @JsonProperty
         protected boolean enabled = false;
 
+        /**
+         * The log level threshold to log messages from.
+         * <p/>
+         * All messages of this level and above will appear in the log.
+         * <p/>
+         * Available levels are (in order, highest first):
+         * <ul>
+         *     <li>OFF</li>
+         *     <li>ERROR</li>
+         *     <li>WARN</li>
+         *     <li>INFO</li>
+         *     <li>DEBUG</li>
+         *     <li>TRACE</li>
+         *     <li>ALL</li>
+         * </ul>
+         *
+         * @default ALL
+         */
         @NotNull
         @JsonProperty
         protected Level threshold = Level.ALL;
@@ -154,10 +281,23 @@ public class LoggingConfiguration {
         )
         protected String facility = "local0";
 
+        /**
+         * The timezone for the timestamps for log messages.
+         * <p/>
+         * This must be a valid timezone identifier, e.g. "<i>Europe/London</i>", "<i>EST</i>".
+         *
+         * @default UTC
+         */
         @NotNull
         @JsonProperty
         protected TimeZone timeZone = UTC;
 
+        /**
+         * The format of log messages.
+         * <p/>
+         * The format must be a pattern that is valid for Logbacks' {@link
+         * http://logback.qos.ch/manual/layouts.html#PatternLayout PatternLayout}.
+         */
         @JsonProperty
         protected String logFormat;
 
@@ -186,24 +326,59 @@ public class LoggingConfiguration {
         }
     }
 
+    /**
+     * The log level threshold to log messages from.
+     * <p/>
+     * All messages of this level and above will appear in the log.
+     * <p/>
+     * Available levels are (in order, highest first):
+     * <ul>
+     *     <li>OFF</li>
+     *     <li>ERROR</li>
+     *     <li>WARN</li>
+     *     <li>INFO</li>
+     *     <li>DEBUG</li>
+     *     <li>TRACE</li>
+     *     <li>ALL</li>
+     * </ul>
+     *
+     * @default ALL
+     */
     @NotNull
     @JsonProperty
     protected Level level = Level.INFO;
 
+    /**
+     * An {@link ImmutableMap} of custom log {@link Level}s for specific classes or packages.
+     * <p/>
+     * Provides fine-grained filter on the {@link Level} of log messages for specific classes or
+     * packages. The name of the mapping is the fully-qualified {@link Class} or {@link Package}
+     * and the value is be the minimum {@link Level} that messages from that {@link Class} or
+     * {@link Package} must be in order to be logged.
+     */
     @NotNull
     @JsonProperty
     protected ImmutableMap<String, Level> loggers = ImmutableMap.of();
 
+    /**
+     * Configuration for logging to the console.
+     */
     @Valid
     @NotNull
     @JsonProperty
     protected ConsoleConfiguration console = new ConsoleConfiguration();
 
+    /**
+     * Configuration for logging to a file.
+     */
     @Valid
     @NotNull
     @JsonProperty
     protected FileConfiguration file = new FileConfiguration();
 
+    /**
+     * Configuration for logging to syslog.
+     */
     @Valid
     @NotNull
     @JsonProperty
