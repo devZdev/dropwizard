@@ -37,7 +37,7 @@ public class SslConfiguration {
      * The type of the SSL Key Store.
      * <p/>
      * See the KeyStore section in the <a href=
-     * "{@docRoot}/../technotes/guides/security/StandardNames.html#KeyStore">
+     * "http://docs.oracle.com/javase/6/docs/technotes/guides/security/StandardNames.html#KeyStore">
      * Java Cryptography Architecture Standard Algorithm Name Documentation</a>
      * for information about standard keystore types.
      *
