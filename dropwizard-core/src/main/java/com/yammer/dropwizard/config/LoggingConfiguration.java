@@ -70,7 +70,9 @@ public class LoggingConfiguration {
          * The format of log messages.
          * <p/>
          * The format must be a pattern that is valid for Logbacks' {@link
-         * http://logback.qos.ch/manual/layouts.html#PatternLayout PatternLayout}.
+         * ch.qos.logback.classic.PatternLayout}.
+         *
+         * @see <a href="http://logback.qos.ch/manual/layouts.html#PatternLayout">PatternLayout</a>
          */
         @JsonProperty
         private String logFormat;
@@ -157,8 +159,10 @@ public class LoggingConfiguration {
          * The pattern to use for archived log files.
          * <p/>
          * The pattern must be a valid Logback {@link
-         * http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy
-         * TimeBasedRollingPolicy} file name pattern.
+         * ch.qos.logback.core.rolling.TimeBasedRollingPolicy} file name pattern.
+         *
+         * @see <a href="http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy">
+         *     TimeBasedRollingPolicy</a>
          */
         @JsonProperty
         private String archivedLogFilenamePattern;
@@ -191,7 +195,9 @@ public class LoggingConfiguration {
          * The format of log messages.
          * <p/>
          * The format must be a pattern that is valid for Logbacks' {@link
-         * http://logback.qos.ch/manual/layouts.html#PatternLayout PatternLayout}.
+         * ch.qos.logback.classic.PatternLayout}.
+         *
+         * @see <a href="http://logback.qos.ch/manual/layouts.html#PatternLayout">PatternLayout</a>
          */
         @JsonProperty
         private String logFormat;
@@ -341,7 +347,9 @@ public class LoggingConfiguration {
          * The format of log messages.
          * <p/>
          * The format must be a pattern that is valid for Logbacks' {@link
-         * http://logback.qos.ch/manual/layouts.html#PatternLayout PatternLayout}.
+         * ch.qos.logback.classic.PatternLayout}.
+         *
+         * @see <a href="http://logback.qos.ch/manual/layouts.html#PatternLayout">PatternLayout</a>
          */
         @JsonProperty
         private String logFormat;
