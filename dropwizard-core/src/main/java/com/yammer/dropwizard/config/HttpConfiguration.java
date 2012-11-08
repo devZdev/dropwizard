@@ -287,8 +287,8 @@ public class HttpConfiguration {
      * HttpConfiguration#adminPort} when this server is not actively listening on them.
      * <p/>
      * Normally, when a process ends, the kernel will close the bound sockets but keep the port(s)
-     * in a state that blocks new processes from binding to the port(s). This ensures that when a
-     * process ends, its port will be immediately released for other processes to bind to.
+     * in a state that blocks new processes from binding to the port(s). This option ensures that
+     * when a process ends, its port will be immediately released for other processes to bind to.
      * <p/>
      * It's recommended to keep this enabled to allow your application to restart without
      * encountering <i>"Address already in use"</i> errors.
@@ -299,7 +299,7 @@ public class HttpConfiguration {
     private boolean reuseAddress = true;
 
     /**
-     * The time to keep a socket around for after the connection is closed.
+     * The {@link Duration} to keep a socket around for after the connection is closed.
      */
     @JsonProperty
     private Duration soLingerTime = null;
