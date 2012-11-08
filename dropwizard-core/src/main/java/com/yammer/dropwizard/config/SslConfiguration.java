@@ -9,22 +9,56 @@ import java.io.File;
 import java.util.List;
 
 @SuppressWarnings("UnusedDeclaration")
+
+/**
+ * Configuration for a socket/connector secured with SSL (Secure Socket Layer).
+ */
 public class SslConfiguration {
+
+    /**
+     * The path to the SSL Key Store.
+     */
     @JsonProperty
     private File keyStore = null;
 
+    /**
+     * The password used to access the SSL Key Store file.
+     */
     @JsonProperty
     private String keyStorePassword = null;
 
+    /**
+     * The password used to access the certificate's key entry in the Key Store.
+     */
     @JsonProperty
     private String keyManagerPassword = null;
 
+    /**
+     * The type of the SSL Key Store.
+     * <p/>
+     * See the KeyStore section in the <a href=
+     * "{@docRoot}/../technotes/guides/security/StandardNames.html#KeyStore">
+     * Java Cryptography Architecture Standard Algorithm Name Documentation</a>
+     * for information about standard keystore types.
+     *
+     * @default JKS
+     */
     @JsonProperty
     private String keyStoreType = "JKS";
 
+    /**
+     * The alias to use for the SSL Certificate.
+     */
     @JsonProperty
     private String certAlias = null;
 
+    /**
+     * The list of supported SSL protocols.
+     * <p/>
+     * Protocols omitted from this list cannot be used.
+     *
+     * @default SSLv3, TLSv1, TLSv1.1, TLSv1.2
+     */
     @NotEmpty
     @JsonProperty
     private ImmutableList<String> supportedProtocols = ImmutableList.of("SSLv3",
