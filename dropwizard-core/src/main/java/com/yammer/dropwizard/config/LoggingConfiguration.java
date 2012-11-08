@@ -431,10 +431,10 @@ public class LoggingConfiguration {
     /**
      * An {@link ImmutableMap} of custom log {@link Level}s for specific classes or packages.
      * <p/>
-     * Provides fine-grained filter on the {@link Level} of log messages for specific classes or
-     * packages. The name of the mapping is the fully-qualified {@link Class} or {@link Package}
-     * and the value is be the minimum {@link Level} that messages from that {@link Class} or
-     * {@link Package} must be in order to be logged.
+     * Provides fine-grained filtering on the {@link Level} of log messages for specific classes or
+     * packages. The name of the mapping is the fully-qualified {@link Class} or {@link Package} for
+     * the logger and the value is the minimum {@link Level} that messages must have in order to be
+     * logged.
      */
     @NotNull
     @JsonProperty
