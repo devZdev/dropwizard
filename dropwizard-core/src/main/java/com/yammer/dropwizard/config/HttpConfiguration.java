@@ -21,6 +21,31 @@ import java.util.Map;
  */
 @SuppressWarnings("UnusedDeclaration")
 public class HttpConfiguration {
+
+    /**
+     * The type of an HTTP Connector.
+     * <p/>
+     * Available options:
+     * <dl>
+     *     <dt><i>blocking</i></dt>
+     *     <dd>One thread per connection. Concurrent client <i>connections</i> bounded by {@link
+     *     HttpConfiguration#maxThreads}.</dd>
+     *
+     *     <dt><i>nonblocking</i></dt>
+     *     <dd>Threads are allocated to requests, allowing clients to maintain idle connections
+     *     without tying up a server thread. Concurrent <i>requests</i> bounded by {@link
+     *     HttpConfiguration#maxThreads}.</dd>
+     *
+     *     <dt><i>nonblocking+ssl</i></dt>
+     *     <dd>As above, but for SSL connections.</dd>
+     *
+     *     <dt><i>legacy</i></dt>
+     *     <dd>Like "blocking", but uses the legacy {@link java.net.Socket} API.</dd>
+     *
+     *     <dt><i>legacy+ssl</i></dt>
+     *     <dd>As above, but for SSL connections.</dd>
+     * </dl>
+     */
     public enum ConnectorType {
         BLOCKING,
         LEGACY,
@@ -148,26 +173,7 @@ public class HttpConfiguration {
     /**
      * The type of connector to handle HTTP requests with.
      * <p/>
-     * Available options:
-     * <dl>
-     *     <dt><i>blocking</i></dt>
-     *     <dd>One thread per connection. Concurrent client <i>connections</i> bounded by {@link
-     *     HttpConfiguration#maxThreads}.</dd>
-     *
-     *     <dt><i>nonblocking</i></dt>
-     *     <dd>Threads are allocated to requests, allowing clients to maintain idle connections
-     *     without tying up a server thread. Concurrent <i>requests</i> bounded by {@link
-     *     HttpConfiguration#maxThreads}.</dd>
-     *
-     *     <dt><i>nonblocking+ssl</i></dt>
-     *     <dd>As above, but for SSL connections.</dd>
-     *
-     *     <dt><i>legacy</i></dt>
-     *     <dd>Like "blocking", but uses the legacy {@link java.net.Socket} API.</dd>
-     *
-     *     <dt><i>legacy+ssl</i></dt>
-     *     <dd>As above, but for SSL connections.</dd>
-     * </dl>
+     * See {@link ConnectorType} for available options.
      *
      * @default blocking
      */
