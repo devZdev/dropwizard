@@ -35,7 +35,11 @@ public class RequestLogConfiguration {
     private SyslogConfiguration syslogConfiguration = new SyslogConfiguration();
 
     /**
-     * The timezone for the timestamps in the request log.
+     * The {@link TimeZone} for the timestamps for log messages.
+     * <p/>
+     * This must be a valid timezone identifier, e.g. "<i>Europe/London</i>", "<i>EST</i>".
+     *
+     * @default UTC
      */
     @NotNull
     @JsonProperty

@@ -57,7 +57,7 @@ public class LoggingConfiguration {
         private Level threshold = Level.ALL;
 
         /**
-         * The timezone for the timestamps for log messages.
+         * The {@link TimeZone} for the timestamps for log messages.
          * <p/>
          * This must be a valid timezone identifier, e.g. "<i>Europe/London</i>", "<i>EST</i>".
          *
