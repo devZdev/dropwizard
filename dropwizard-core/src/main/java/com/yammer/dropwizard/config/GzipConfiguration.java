@@ -1,14 +1,16 @@
 package com.yammer.dropwizard.config;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.yammer.dropwizard.util.Size;
-import org.codehaus.jackson.annotate.JsonProperty;
 
-@SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
+import java.util.Set;
+
 /**
  * Configuration for the compression of HTTP entities with the GZIP algorithm.
  */
+@SuppressWarnings("UnusedDeclaration")
 public class GzipConfiguration {
 
     /**
@@ -17,7 +19,7 @@ public class GzipConfiguration {
      * @default true
      */
     @JsonProperty
-    protected boolean enabled = true;
+    private boolean enabled = true;
 
     /**
      * The optional minimum {@link Size} threshold for entities to require compression.
@@ -25,13 +27,13 @@ public class GzipConfiguration {
      * Entities that are smaller than this threshold will not be compressed.
      */
     @JsonProperty
-    protected Size minimumEntitySize = null;
+    private Size minimumEntitySize = null;
 
     /**
      * The {@link Size} of the GZIP compression buffer.
      */
     @JsonProperty
-    protected Size bufferSize = null;
+    private Size bufferSize = null;
 
     /**
      * An optional {@link ImmutableSet set} of user agents to exclude from compression.
@@ -41,7 +43,7 @@ public class GzipConfiguration {
      * When omitted, all user agents are eligible for compression.
      */
     @JsonProperty
-    protected ImmutableSet<String> excludedUserAgents = null;
+    private ImmutableSet<String> excludedUserAgents = null;
 
     /**
      * An optional {@link ImmutableSet set} of MIME types to compress.
@@ -53,25 +55,45 @@ public class GzipConfiguration {
      * type <i>"application/gzip"</i>
      */
     @JsonProperty
-    protected ImmutableSet<String> compressedMimeTypes = null;
+    private ImmutableSet<String> compressedMimeTypes = null;
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public Optional<Size> getMinimumEntitySize() {
         return Optional.fromNullable(minimumEntitySize);
     }
 
+    public void setMinimumEntitySize(Size size) {
+        this.minimumEntitySize = size;
+    }
+
     public Optional<Size> getBufferSize() {
         return Optional.fromNullable(bufferSize);
+    }
+
+    public void setBufferSize(Size size) {
+        this.bufferSize = size;
     }
 
     public Optional<ImmutableSet<String>> getExcludedUserAgents() {
         return Optional.fromNullable(excludedUserAgents);
     }
 
+    public void setExcludedUserAgents(Set<String> userAgents) {
+        this.excludedUserAgents = (userAgents == null) ? null : ImmutableSet.copyOf(userAgents);
+    }
+
     public Optional<ImmutableSet<String>> getCompressedMimeTypes() {
         return Optional.fromNullable(compressedMimeTypes);
+    }
+
+    public void setCompressedMimeTypes(Set<String> mimeTypes) {
+        this.compressedMimeTypes = (mimeTypes == null) ? null : ImmutableSet.copyOf(mimeTypes);
     }
 }

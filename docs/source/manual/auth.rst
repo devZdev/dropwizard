@@ -75,8 +75,8 @@ takes instances of ``BasicCredentials``:
 .. code-block:: java
 
     @Override
-    protected void initialize(ExampleConfiguration configuration,
-                              Environment environment) {
+    public void run(ExampleConfiguration configuration,
+                    Environment environment) {
         environment.addProvider(new BasicAuthProvider<User>(new ExampleAuthenticator(),
                                                             "SUPER SECRET STUFF"));
     }
@@ -96,9 +96,9 @@ which takes an instance of ``String``.
 .. code-block:: java
 
     @Override
-    protected void initialize(ExampleConfiguration configuration,
-                              Environment environment) {
-        environment.addProvider(new BasicAuthProvider<User>(new ExampleAuthenticator(),
+    public void run(ExampleConfiguration configuration,
+                    Environment environment) {
+        environment.addProvider(new OAuthProvider<User>(new ExampleAuthenticator(),
                                                             "SUPER SECRET STUFF"));
     }
 

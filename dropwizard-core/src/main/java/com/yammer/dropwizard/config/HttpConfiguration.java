@@ -1,39 +1,60 @@
 package com.yammer.dropwizard.config;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.yammer.dropwizard.util.Duration;
 import com.yammer.dropwizard.util.Size;
 import com.yammer.dropwizard.validation.ValidationMethod;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import java.util.Locale;
+import java.util.Map;
 
 /**
- * Configuration for a Dropwizard HTTP server.
+ * An object representation of the {@code http} section of the YAML configuration file.
  */
-@SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal", "CanBeFinal"})
+@SuppressWarnings("UnusedDeclaration")
 public class HttpConfiguration {
+    public enum ConnectorType {
+        BLOCKING,
+        LEGACY,
+        LEGACY_SSL,
+        NONBLOCKING,
+        NONBLOCKING_SSL;
+
+        @Override
+        @JsonValue
+        public String toString() {
+            return super.toString().replace("_", "+").toLowerCase(Locale.ENGLISH);
+        }
+
+        @JsonCreator
+        public static ConnectorType parse(String type) {
+            return valueOf(type.toUpperCase(Locale.ENGLISH).replace('+', '_'));
+        }
+    }
 
     /**
      * Configuration for the HTTP request log.
      */
     @Valid
     @NotNull
-    @JsonProperty
-    protected RequestLogConfiguration requestLog = new RequestLogConfiguration();
+    @JsonProperty("requestLog")
+    private RequestLogConfiguration requestLogConfiguration = new RequestLogConfiguration();
 
     /**
      * Configuration for GZip compression of requests and responses.
      */
     @Valid
     @NotNull
-    @JsonProperty
-    protected GzipConfiguration gzip = new GzipConfiguration();
+    @JsonProperty("gzip")
+    private GzipConfiguration gzipConfiguration = new GzipConfiguration();
 
     /**
      * Configuration for SSL (Secure Socket Layer).
@@ -43,20 +64,12 @@ public class HttpConfiguration {
      * When omitted, SSL connections are not supported (default).
      */
     @Valid
-    @JsonProperty
-    protected SslConfiguration ssl = null;
+    @JsonProperty("ssl")
+    private SslConfiguration sslConfiguration = null;
 
     @NotNull
     @JsonProperty
-    protected ImmutableMap<String, String> contextParameters = ImmutableMap.of();
-
-    public enum ConnectorType {
-        SOCKET,
-        BLOCKING_CHANNEL,
-        SELECT_CHANNEL,
-        SOCKET_SSL,
-        SELECT_CHANNEL_SSL
-    }
+    private ImmutableMap<String, String> contextParameters = ImmutableMap.of();
 
     /**
      * The port the HTTP server should bind to for application requests.
@@ -71,7 +84,7 @@ public class HttpConfiguration {
     @Min(1025)
     @Max(65535)
     @JsonProperty
-    protected int port = 8080;
+    private int port = 8080;
 
     /**
      * The port the HTTP server should bind to for administration requests.
@@ -86,7 +99,7 @@ public class HttpConfiguration {
     @Min(1025)
     @Max(65535)
     @JsonProperty
-    protected int adminPort = 8081;
+    private int adminPort = 8081;
 
     /**
      * The maximum number of {@link Thread}s to use to handle HTTP requests.
@@ -104,7 +117,7 @@ public class HttpConfiguration {
     @Min(2)
     @Max(1000000)
     @JsonProperty
-    protected int maxThreads = 254;
+    private int maxThreads = 254;
 
     /**
      * The minimum number of {@link Thread}s to keep around for handling HTTP requests.
@@ -118,7 +131,7 @@ public class HttpConfiguration {
     @Min(1)
     @Max(1000000)
     @JsonProperty
-    protected int minThreads = 8;
+    private int minThreads = 8;
 
     /**
      * The root path for all requests this HTTP server will handle.
@@ -130,8 +143,8 @@ public class HttpConfiguration {
      */
     @NotNull
     @JsonProperty
-    protected String rootPath = "/*";
-
+    private String rootPath = "/*";
+    
     /**
      * The type of connector to handle HTTP requests with.
      * <p/>
@@ -159,10 +172,8 @@ public class HttpConfiguration {
      * @default blocking
      */
     @NotNull
-    @Pattern(regexp = "^(blocking|nonblocking|nonblocking\\+ssl|legacy|legacy\\+ssl)$",
-             flags = {Pattern.Flag.CASE_INSENSITIVE})
     @JsonProperty
-    protected String connectorType = "blocking";
+    private ConnectorType connectorType = ConnectorType.BLOCKING;
 
     /**
      * The maximum time a connection may remain idle before being closed by the server.
@@ -171,7 +182,7 @@ public class HttpConfiguration {
      */
     @NotNull
     @JsonProperty
-    protected Duration maxIdleTime = Duration.seconds(200);
+    private Duration maxIdleTime = Duration.seconds(200);
 
     /**
      * The number of {@link Thread}s to use for accepting new connections.
@@ -186,7 +197,7 @@ public class HttpConfiguration {
     @Min(1)
     @Max(128)
     @JsonProperty
-    protected int acceptorThreadCount = 1;
+    private int acceptorThreads = 1;
 
     /**
      * The amount to offset the {@link Thread} priority for accepting new connections.
@@ -204,7 +215,7 @@ public class HttpConfiguration {
     @Min(-Thread.NORM_PRIORITY)
     @Max(Thread.NORM_PRIORITY)
     @JsonProperty
-    protected int acceptorThreadPriorityOffset = 0;
+    private int acceptorThreadPriorityOffset = 0;
 
     /**
      * The maximum size of the queue of accepted connections that are waiting to be handled by the
@@ -217,7 +228,7 @@ public class HttpConfiguration {
      */
     @Min(-1)
     @JsonProperty
-    protected int acceptQueueSize = -1;
+    private int acceptQueueSize = -1;
 
     /**
      * The maximum number of buffers to use for requests and responses.
@@ -227,7 +238,7 @@ public class HttpConfiguration {
      */
     @Min(1)
     @JsonProperty
-    protected int maxBufferCount = 1024;
+    private int maxBufferCount = 1024;
 
     /**
      * The {@link Size} of each request buffer.
@@ -236,7 +247,7 @@ public class HttpConfiguration {
      */
     @NotNull
     @JsonProperty
-    protected Size requestBufferSize = Size.kilobytes(16);
+    private Size requestBufferSize = Size.kilobytes(16);
 
     /**
      * The {@link Size} of each request header buffer.
@@ -245,7 +256,7 @@ public class HttpConfiguration {
      */
     @NotNull
     @JsonProperty
-    protected Size requestHeaderBufferSize = Size.kilobytes(6);
+    private Size requestHeaderBufferSize = Size.kilobytes(6);
 
     /**
      * The {@link Size} of each response buffer.
@@ -254,7 +265,7 @@ public class HttpConfiguration {
      */
     @NotNull
     @JsonProperty
-    protected Size responseBufferSize = Size.kilobytes(32);
+    private Size responseBufferSize = Size.kilobytes(32);
 
     /**
      * The {@link Size} of each response header buffer.
@@ -263,7 +274,7 @@ public class HttpConfiguration {
      */
     @NotNull
     @JsonProperty
-    protected Size responseHeaderBufferSize = Size.kilobytes(6);
+    private Size responseHeaderBufferSize = Size.kilobytes(6);
 
     /**
      * Whether to allow other sockets to bind to the {@link HttpConfiguration#port} and {@link
@@ -279,13 +290,13 @@ public class HttpConfiguration {
      * @default true
      */
     @JsonProperty
-    protected boolean reuseAddress = true;
+    private boolean reuseAddress = true;
 
     /**
      * The time to keep a socket around for after the connection is closed.
      */
     @JsonProperty
-    protected Duration soLingerTime = null;
+    private Duration soLingerTime = null;
 
     /**
      * The total number of concurrent connections that triggers "low-resource mode" for the {@code
@@ -298,7 +309,7 @@ public class HttpConfiguration {
      * @default 0
      */
     @JsonProperty
-    protected int lowResourcesConnectionThreshold = 0;
+    private int lowResourcesConnectionThreshold = 0;
 
     /**
      * The {@link HttpConfiguration#maxIdleTime maximum idle time} for connections when
@@ -313,7 +324,7 @@ public class HttpConfiguration {
      */
     @NotNull
     @JsonProperty
-    protected Duration lowResourcesMaxIdleTime = Duration.seconds(0);
+    private Duration lowResourcesMaxIdleTime = Duration.seconds(0);
 
     /**
      * The maximum time to wait, during shutdown, for currently executing requests to complete.
@@ -322,7 +333,7 @@ public class HttpConfiguration {
      */
     @NotNull
     @JsonProperty
-    protected Duration shutdownGracePeriod = Duration.seconds(2);
+    private Duration shutdownGracePeriod = Duration.seconds(2);
 
     /**
      * Whether to send the {@code Server} header in responses.
@@ -333,7 +344,7 @@ public class HttpConfiguration {
      * @default false
      */
     @JsonProperty
-    protected boolean useServerHeader = false;
+    private boolean useServerHeader = false;
 
     /**
      * Whether to send the {@code Date} header in responses.
@@ -344,7 +355,7 @@ public class HttpConfiguration {
      * @default true
      */
     @JsonProperty
-    protected boolean useDateHeader = true;
+    private boolean useDateHeader = true;
 
     /**
      * Whether to use headers forwarded by a proxy.
@@ -355,7 +366,7 @@ public class HttpConfiguration {
      * @default true
      */
     @JsonProperty
-    protected boolean useForwardedHeaders = true;
+    private boolean useForwardedHeaders = true;
 
     /**
      * Whether to use direct buffers for non-legacy {@link HttpConfiguration#connectorType}s.
@@ -369,7 +380,7 @@ public class HttpConfiguration {
      * @default true
      */
     @JsonProperty
-    protected boolean useDirectBuffers = true;
+    private boolean useDirectBuffers = true;
 
     /**
      * The host to bind this HTTP server to.
@@ -381,7 +392,7 @@ public class HttpConfiguration {
      * different hosts.
      */
     @JsonProperty
-    protected String bindHost = null;
+    private String bindHost = null;
 
     /**
      * The username to require for the integrated administrative HTTP interface.
@@ -391,7 +402,7 @@ public class HttpConfiguration {
      * HttpConfiguration#adminPassword}.
      */
     @JsonProperty
-    protected String adminUsername = null;
+    private String adminUsername = null;
 
     /**
      * The password to require for the integrated administrative HTTP interface.
@@ -401,13 +412,13 @@ public class HttpConfiguration {
      * HttpConfiguration#adminUsername}.
      */
     @JsonProperty
-    protected String adminPassword = null;
+    private String adminPassword = null;
 
     @ValidationMethod(message = "must have an SSL configuration when using SSL connection")
     public boolean isSslConfigured() {
         final ConnectorType type = getConnectorType();
-        return !((ssl == null) && ((type == ConnectorType.SOCKET_SSL) ||
-                                   (type == ConnectorType.SELECT_CHANNEL_SSL)));
+        return !((sslConfiguration == null) && ((type == ConnectorType.LEGACY_SSL) ||
+                                   (type == ConnectorType.NONBLOCKING_SSL)));
     }
 
     @ValidationMethod(message = "must have a smaller minThreads than maxThreads")
@@ -421,138 +432,250 @@ public class HttpConfiguration {
     }
 
     public RequestLogConfiguration getRequestLogConfiguration() {
-        return requestLog;
+        return requestLogConfiguration;
+    }
+
+    public void setRequestLogConfiguration(RequestLogConfiguration config) {
+        this.requestLogConfiguration = config;
     }
 
     public GzipConfiguration getGzipConfiguration() {
-        return gzip;
+        return gzipConfiguration;
+    }
+
+    public void setGzipConfiguration(GzipConfiguration config) {
+        this.gzipConfiguration = config;
     }
 
     public SslConfiguration getSslConfiguration() {
-        return ssl;
+        return sslConfiguration;
+    }
+
+    public void setSslConfiguration(SslConfiguration config) {
+        this.sslConfiguration = config;
     }
 
     public ImmutableMap<String, String> getContextParameters() {
         return contextParameters;
     }
-    
+
+    public void setContextParameters(Map<String, String> contextParameters) {
+        this.contextParameters = ImmutableMap.copyOf(contextParameters);
+    }
+
     public ConnectorType getConnectorType() {
-        if ("blocking".equalsIgnoreCase(connectorType)) {
-            return ConnectorType.BLOCKING_CHANNEL;
-        } else if ("legacy".equalsIgnoreCase(connectorType)) {
-            return ConnectorType.SOCKET;
-        } else if ("legacy+ssl".equalsIgnoreCase(connectorType)) {
-            return ConnectorType.SOCKET_SSL;
-        } else if ("nonblocking".equalsIgnoreCase(connectorType)) {
-            return ConnectorType.SELECT_CHANNEL;
-        } else if ("nonblocking+ssl".equalsIgnoreCase(connectorType)) {
-            return ConnectorType.SELECT_CHANNEL_SSL;
-        } else {
-            throw new IllegalStateException("Invalid connector type: " + connectorType);
-        }
+        return connectorType;
+    }
+
+    public void setConnectorType(ConnectorType type) {
+        this.connectorType = type;
     }
 
     public int getPort() {
         return port;
     }
 
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     public int getAdminPort() {
         return adminPort;
+    }
+
+    public void setAdminPort(int port) {
+        this.adminPort = port;
     }
 
     public int getMaxThreads() {
         return maxThreads;
     }
 
+    public void setMaxThreads(int count) {
+        this.maxThreads = count;
+    }
+
     public int getMinThreads() {
         return minThreads;
+    }
+
+    public void setMinThreads(int count) {
+        this.minThreads = count;
     }
 
     public Duration getMaxIdleTime() {
         return maxIdleTime;
     }
 
-    public int getAcceptorThreadCount() {
-        return acceptorThreadCount;
+    public void setMaxIdleTime(Duration duration) {
+        this.maxIdleTime = duration;
+    }
+
+    public int getAcceptorThreads() {
+        return acceptorThreads;
+    }
+
+    public void setAcceptorThreads(int count) {
+        this.acceptorThreads = count;
     }
 
     public int getAcceptorThreadPriorityOffset() {
         return acceptorThreadPriorityOffset;
     }
 
+    public void setAcceptorThreadPriorityOffset(int priorityOffset) {
+        this.acceptorThreadPriorityOffset = priorityOffset;
+    }
+
     public int getAcceptQueueSize() {
         return acceptQueueSize;
+    }
+
+    public void setAcceptQueueSize(int size) {
+        this.acceptQueueSize = size;
     }
 
     public int getMaxBufferCount() {
         return maxBufferCount;
     }
 
+    public void setMaxBufferCount(int count) {
+        this.maxBufferCount = count;
+    }
+
     public Size getRequestBufferSize() {
         return requestBufferSize;
+    }
+
+    public void setRequestBufferSize(Size size) {
+        this.requestBufferSize = size;
     }
 
     public Size getRequestHeaderBufferSize() {
         return requestHeaderBufferSize;
     }
 
+    public void setRequestHeaderBufferSize(Size size) {
+        this.requestHeaderBufferSize = size;
+    }
+
     public Size getResponseBufferSize() {
         return responseBufferSize;
+    }
+
+    public void setResponseBufferSize(Size size) {
+        this.responseBufferSize = size;
     }
 
     public Size getResponseHeaderBufferSize() {
         return responseHeaderBufferSize;
     }
 
+    public void setResponseHeaderBufferSize(Size size) {
+        this.responseHeaderBufferSize = size;
+    }
+
     public boolean isReuseAddressEnabled() {
         return reuseAddress;
+    }
+
+    public void setReuseAddress(boolean reuseAddress) {
+        this.reuseAddress = reuseAddress;
     }
 
     public Optional<Duration> getSoLingerTime() {
         return Optional.fromNullable(soLingerTime);
     }
 
+    public void setSoLingerTime(Duration duration) {
+        this.soLingerTime = duration;
+    }
+
     public int getLowResourcesConnectionThreshold() {
         return lowResourcesConnectionThreshold;
+    }
+
+    public void setLowResourcesConnectionThreshold(int connectionCount) {
+        this.lowResourcesConnectionThreshold = connectionCount;
     }
 
     public Duration getLowResourcesMaxIdleTime() {
         return lowResourcesMaxIdleTime;
     }
 
+    public void setLowResourcesMaxIdleTime(Duration duration) {
+        this.lowResourcesMaxIdleTime = duration;
+    }
+
     public Duration getShutdownGracePeriod() {
         return shutdownGracePeriod;
+    }
+
+    public void setShutdownGracePeriod(Duration duration) {
+        this.shutdownGracePeriod = duration;
     }
 
     public boolean useForwardedHeaders() {
         return useForwardedHeaders;
     }
 
+    public void setUseForwardedHeaders(boolean useForwardedHeaders) {
+        this.useForwardedHeaders = useForwardedHeaders;
+    }
+
     public boolean useDirectBuffers() {
         return useDirectBuffers;
+    }
+
+    public void setUseDirectBuffers(boolean useDirectBuffers) {
+        this.useDirectBuffers = useDirectBuffers;
     }
 
     public Optional<String> getBindHost() {
         return Optional.fromNullable(bindHost);
     }
 
+    public void setBindHost(String host) {
+        this.bindHost = host;
+    }
+
     public boolean isDateHeaderEnabled() {
         return useDateHeader;
+    }
+
+    public void setUseDateHeader(boolean useDateHeader) {
+        this.useDateHeader = useDateHeader;
     }
 
     public boolean isServerHeaderEnabled() {
         return useServerHeader;
     }
 
+    public void setUseServerHeader(boolean useServerHeader) {
+        this.useServerHeader = useServerHeader;
+    }
+
     public String getRootPath() {
         return rootPath;
+    }
+
+    public void setRootPath(String path) {
+        this.rootPath = path;
     }
 
     public Optional<String> getAdminUsername() {
         return Optional.fromNullable(adminUsername);
     }
 
+    public void setAdminUsername(String username) {
+        this.adminUsername = username;
+    }
+
     public Optional<String> getAdminPassword() {
         return Optional.fromNullable(adminPassword);
+    }
+
+    public void setAdminPassword(String password) {
+        this.adminPassword = password;
     }
 }
