@@ -49,6 +49,7 @@ public class LoggingConfiguration {
          *     <li>ALL</li>
          * </ul>
          *
+         * @see Level
          * @default ALL
          */
         @NotNull
@@ -132,6 +133,7 @@ public class LoggingConfiguration {
          *     <li>ALL</li>
          * </ul>
          *
+         * @see Level
          * @default ALL
          */
         @NotNull
@@ -419,6 +421,7 @@ public class LoggingConfiguration {
      *     <li>ALL</li>
      * </ul>
      *
+     * @see Level
      * @default ALL
      */
     @NotNull
